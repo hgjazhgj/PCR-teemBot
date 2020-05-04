@@ -14,8 +14,6 @@ class A:
     def test(self):
         return '测试返回'
     def hang(self):
-        if self.pram['sender']['nickname']in self.tree:
-            return '您已经在树上了'
         try:
             self.tree.add(self.pram['sender']['card'])
         except:
