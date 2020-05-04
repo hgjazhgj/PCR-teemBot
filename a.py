@@ -5,7 +5,7 @@ from traceback import print_exc
 class A:
     def __init__(self):
         self.tree=set()
-        self.call={'测试':self.test,'挂树':self.add,'查树':self.get,'砍树':self.clear,'下树':self.erase}
+        self.call={'测试':self.test,'挂树':self.add,'下树':self.erase,'查树':self.get,'砍树':self.clear}
     def count(self):
         return '树上共%d人'%len(self.tree)
     def check(self):
