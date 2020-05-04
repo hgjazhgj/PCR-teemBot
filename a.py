@@ -53,7 +53,7 @@ class A:
                 return '__'
             self.param=param
             try:
-                seld.cmd=[i for i in param['message'].split(' ') if i]
+                self.cmd=[i for i in param['message'].split(' ') if i]
                 self.sender=param['sender']['card']if param['sender']['card']else param['sender']['nickname']
                 return self.call[self.cmd[0][1:]]()
             except KeyError:
