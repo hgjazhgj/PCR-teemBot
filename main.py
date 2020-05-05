@@ -72,7 +72,7 @@ class A:
             return str(e)
     def getSimul(self):
         return self.countSimul()+'\n排名 用户 刀序 伤害'+'\n'.join(('%d%s%d%d'%(i,*j)for i,j in enumerate(sorted(((i,j,self.simulData[i][j])for i in self.simulData for j in range(1,4)),key=lambda x:-x[2]))))
-    def clearSumul(self):
+    def clearSimul(self):
         if self.check():
             return'没有权限'
         self.simulData.clear()
