@@ -9,7 +9,7 @@ class A:
                    '挂树':self.addTree,'下树':self.eraseTree,'查树':self.getTree,'砍树':self.clearTree,
                    '模拟出刀':self.addSimul,'查看模拟刀':self.getSimul,'清空模拟刀':self.clearSimul}
     def sudo(self):
-        if self.sender!='hgjazhgj':
+        if self.param['sender']['user_id']!=979449732:
             return'__'
         try:
             return str(eval(param['message'][6:]))
@@ -18,7 +18,7 @@ class A:
     def countTree(self):
         return'树上共%d人'%len(self.treeData)
     def check(self):
-        return self.param['sender']['role']=='member'and self.sender!='hgjazhgj'#权限狗的快乐
+        return self.param['sender']['role']=='member'and self.param['sender']['user_id']!=979449732#权限狗的快乐
     def test(self):
         return'测试返回 '+str(self.cmd)
     def addTree(self):
@@ -66,7 +66,7 @@ class A:
         if len(self.cmd)!=4:
             return'错误'
         try:
-            self.data[self.sender]=(lambda cmd:[sum(cmd)]+cmd)([int(i)for i in self.cmd[1:]])
+            self.simulData[self.sender]=(lambda cmd:[sum(cmd)]+cmd)([int(i)for i in self.cmd[1:]])
             return'数据添加成功,'+self.countSimul()
         except BaseException as e:
             return str(e)
