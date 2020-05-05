@@ -58,10 +58,12 @@ class A:
             self.param=param
             try:
                 self.cmd=[i for i in param['message'].split(' ') if i]
-                self.sender=(param['sender']['card']if param['sender']['card']else param['sender']['nickname']).repalce(' ','_')
+                self.sender=(param['sender']['card']if param['sender']['card']else param['sender']['nickname']).replace(' ','_')
                 return self.call[self.cmd[0][1:]]()
             except KeyError:
                 return'错误'
+        except KeyError:
+            return'__'
         except:
             print_exc()
             return'__'
