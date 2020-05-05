@@ -28,7 +28,7 @@ class A:
             ans+=i+' 添加成功\n'
         return ans+self.count()
     def get(self):
-        return self.count()+'\n'+'\n'.join((str(i+1)+'.'+(' 'if i<9else'')+j for i,j in enumerate(self.tree)))
+        return self.count()+'\n'+'\n'.join((str(i+1)+'.'+('  'if i<9else'')+j for i,j in enumerate(self.tree)))
     def clear(self):
         if self.check():
             return'没有权限'
@@ -58,7 +58,7 @@ class A:
             self.param=param
             try:
                 self.cmd=[i for i in param['message'].split(' ') if i]
-                self.sender=param['sender']['card']if param['sender']['card']else param['sender']['nickname']
+                self.sender=(param['sender']['card']if param['sender']['card']else param['sender']['nickname']).repalce(' ','_')
                 return self.call[self.cmd[0][1:]]()
             except KeyError:
                 return'错误'
@@ -74,7 +74,9 @@ def api():
         js=request.get_json()
         t=a(js)
         if t!='__':
-            post('http://localhost:5700/send_group_msg',data={'group_id':js['group_id'],'message':t})
+            while t:
+                post('http://localhost:5700/send_group_msg',data={'group_id':js['group_id'],'message':t[:120]})
+                t=t[120:]
         return b'Done'
     except KeyError:
         return b'KeyError'
