@@ -1,6 +1,8 @@
 ﻿from flask import Flask,request
 from requests import post
 from traceback import print_exc
+from HTMLParser import HTMLParser
+htmlParser=HTMLParser()
 class A:
     def __init__(self):
         self.treeData=set()
@@ -92,9 +94,10 @@ class A:
                 return '__'
             print(param)
             self.param=param
+            self.param['message']=htmlParser.unescape(self.param['message'])
             try:
-                self.cmd=[i for i in param['message'].split(' ') if i]
-                self.sender=(param['sender']['card']if param['sender']['card']else param['sender']['nickname']).replace(' ','_')
+                self.cmd=[i for i in self.param['message'].split(' ') if i]
+                self.sender=(self.param['sender']['card']if self.param['sender']['card']else self.param['sender']['nickname']).replace(' ','_')
                 return self.call[self.cmd[0][1:]]()
             except KeyError:
                 return'错误'
