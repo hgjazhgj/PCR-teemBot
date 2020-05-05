@@ -5,10 +5,19 @@ class A:
     def __init__(self):
         self.treeData=set()
         self.simulData={}
-        self.call={'测试':self.test,'sudo':self.sudo,
+        self.debug=None
+        self.call={'测试':self.test,'exec':self.exec,'get':self.get,
                    '挂树':self.addTree,'下树':self.eraseTree,'查树':self.getTree,'砍树':self.clearTree,
                    '模拟出刀':self.addSimul,'查看模拟刀':self.getSimul,'清空模拟刀':self.clearSimul}
-    def sudo(self):
+    def exec(self):
+        if self.param['sender']['user_id']!=979449732:
+            return'__'
+        try:
+            exec(self.param['message'][6:])
+            return'Done'
+        except BaseException as e:
+            return'错误:'+str(e)
+    def get(slef):
         if self.param['sender']['user_id']!=979449732:
             return'__'
         try:
@@ -71,7 +80,7 @@ class A:
         except BaseException as e:
             return str(e)
     def getSimul(self):
-        return self.countSimul()+'\n排名 用户 刀序 伤害'+'\n'.join(('%d%s%d%d'%(i,*j)for i,j in enumerate(sorted(((i,j,self.simulData[i][j])for i in self.simulData for j in range(1,4)),key=lambda x:-x[2]))))
+        return self.countSimul()+'\n排名 用户 刀序 伤害\n'+'\n'.join(('%d  %s  %d  %d'%(i,*j)for i,j in enumerate(sorted(((i,j,self.simulData[i][j])for i in self.simulData for j in range(1,4)),key=lambda x:-x[2]))))
     def clearSimul(self):
         if self.check():
             return'没有权限'
