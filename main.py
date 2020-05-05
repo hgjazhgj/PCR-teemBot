@@ -3,53 +3,80 @@ from requests import post
 from traceback import print_exc
 class A:
     def __init__(self):
-        self.tree=set()
-        self.call={'测试':self.test,'挂树':self.add,'下树':self.erase,'查树':self.get,'砍树':self.clear}
-    def count(self):
-        return'树上共%d人'%len(self.tree)
+        self.treeData=set()
+        self.simulData={}
+        self.call={'测试':self.test,'sudo':self.sudo,
+                   '挂树':self.addTree,'下树':self.eraseTree,'查树':self.getTree,'砍树':self.clearTree,
+                   '模拟出刀':self.addSimul,'查看模拟刀':self.getSimul,'清空模拟刀':self.clearSimul}
+    def sudo(self):
+        if self.sender!='hgjazhgj':
+            return'__'
+        try:
+            return str(eval(param['message'][6:]))
+        except BaseException as e:
+            return'错误:'+str(e)
+    def countTree(self):
+        return'树上共%d人'%len(self.treeData)
     def check(self):
         return self.param['sender']['role']=='member'and self.sender!='hgjazhgj'#权限狗的快乐
     def test(self):
         return'测试返回 '+str(self.cmd)
-    def add(self):
+    def addTree(self):
         if len(self.cmd)==1:
-            if self.sender in self.tree:
+            if self.sender in self.treeData:
                 return'你已经在树上了'
-            self.tree.add(self.sender)
-            return'已挂树,'+self.count()
+            self.treeData.add(self.sender)
+            return'已挂树,'+self.countTree()
         if self.check():
             return'没有权限'
         ans=''
         for i in self.cmd[1:]:
-            if i in self.tree:
+            if i in self.treeData:
                 ans+=i+' 添加失败\n'
                 continue
-            self.tree.add(i)
+            self.treeData.add(i)
             ans+=i+' 添加成功\n'
-        return ans+self.count()
-    def get(self):
-        return self.count()+'\n'+'\n'.join((str(i+1)+'.'+('  'if i<9else'')+j for i,j in enumerate(self.tree)))
-    def clear(self):
+        return ans+self.countTree()
+    def getTree(self):
+        return self.countTree()+'\n'+'\n'.join((str(i+1)+'.'+('  'if i<9else'')+j for i,j in enumerate(self.treeData)))
+    def clearTree(self):
         if self.check():
             return'没有权限'
-        self.tree.clear()
+        self.treeData.clear()
         return'砍树成功'
-    def erase(self):
+    def eraseTree(self):
         if len(self.cmd)==1:
-            if self.sender in self.tree:
-                self.tree.remove(self.sender)
+            if self.sender in self.treeData:
+                self.treeData.remove(self.sender)
                 return'下树成功'
             return'你不在树上'
         if self.check():
             return'没有权限'
         ans=''
         for i in self.cmd[1:]:
-            if i in self.tree:
-                self.tree.remove(i)
+            if i in self.treeData:
+                self.treeData.remove(i)
                 ans+=i+' 移除成功\n'
                 continue
             ans+=i+' 移除失败\n'
-        return ans+self.count()
+        return ans+self.countTree()
+    def countSimul(self):
+        return'已有%d模拟刀'%len(self.simulData)
+    def addSimul(self):
+        if len(self.cmd)!=4:
+            return'错误'
+        try:
+            self.data[self.sender]=(lambda cmd:[sum(cmd)]+cmd)([int(i)for i in self.cmd[1:]])
+            return'数据添加成功,'+self.countSimul()
+        except BaseException as e:
+            return str(e)
+    def getSimul(self):
+        return self.countSimul()+'\n排名 用户 刀序 伤害'+'\n'.join(('%d%s%d%d'%(i,*j)for i,j in enumerate(sorted(((i,j,self.simulData[i][j])for i in self.simulData for j in range(1,4)),key=lambda x:-x[2]))))
+    def clearSumul(self):
+        if self.check():
+            return'没有权限'
+        self.simulData.clear()
+        return'清除成功'
     def __call__(self,param):
         try:
             if not param['message'].startswith('/'):
