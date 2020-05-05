@@ -12,7 +12,7 @@ class A:
         if self.param['sender']['user_id']!=979449732:
             return'__'
         try:
-            return str(eval(param['message'][6:]))
+            return str(eval(self.param['message'][6:]))
         except BaseException as e:
             return'错误:'+str(e)
     def countTree(self):
