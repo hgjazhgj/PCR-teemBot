@@ -89,6 +89,8 @@ class A:
         return'清除成功'
     def __call__(self,param):
         try:
+            if param['message'].startswith('`'):
+                return param['message'][1:]
             if not param['message'].startswith(':'):
                 return '__'
             print(param)
