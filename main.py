@@ -2,6 +2,9 @@
 from requests import post
 from traceback import print_exc
 import html
+import re
+import time
+
 class A:
     def __init__(self):
         self.treeData=set()
@@ -74,7 +77,7 @@ class A:
         return'已有%d模拟刀'%len(self.simulData)
     def addSimul(self):
         if len(self.cmd)!=4:
-            return'错误'
+            return'错误:需要正好3个参数'
         try:
             self.simulData[self.sender]=(lambda cmd:[sum(cmd)]+cmd)([int(i)for i in self.cmd[1:]])
             return'数据添加成功,'+self.countSimul()
@@ -89,19 +92,26 @@ class A:
         return'清除成功'
     def __call__(self,param):
         try:
+            param['message']=html.unescape(self.param['message'])
+            self.param=param
             if param['message'].startswith('`'):
                 return param['message'][1:]
+            if param['message'].startswith('!'):
+                try:
+                    s=re.search(r'[0-9+\-*/().]+',param['message']).group()
+                    return s+'='+str(eval(s))
+                except AttributeError:
+                    return'错误:不含算术表达式'
+                except BaseException as e:
+                    return'错误:请检查表达式'
             if not param['message'].startswith(':'):
-                return '__'
-            print(param)
-            self.param=param
-            self.param['message']=html.unescape(self.param['message'])
+                return'__'
             try:
-                self.cmd=[i for i in self.param['message'].split(' ') if i]
-                self.sender=(self.param['sender']['card']if self.param['sender']['card']else self.param['sender']['nickname']).replace(' ','_')
+                self.cmd=[i for i in param['message'].split(' ') if i]
+                self.sender=(param['sender']['card']if param['sender']['card']else param['sender']['nickname']).replace(' ','_')
                 return self.call[self.cmd[0][1:]]()
             except KeyError:
-                return'错误'
+                return'错误:找不到指令'
         except KeyError:
             return'__'
         except:
@@ -116,6 +126,9 @@ def api():
         js=request.get_json()
         t=a(js)
         if t!='__':
+            print(time.strftime('%Y-%m-%d_%H.%M.%S',time.localtime(js['time'])),js['sender'])
+            print(js['message'])
+            print(t)
             while t:
                 post('http://localhost:5700/send_group_msg',data={'group_id':js['group_id'],'message':t[:120]})
                 t=t[120:]
