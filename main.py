@@ -7,7 +7,7 @@ class A:
         self.treeData=set()
         self.simulData={}
         self.debug=None
-        self.call={'测试':self.test,'exec':self.exec,'get':self.get,
+        self.call={'测试':self.test,'exec':self.exec,'eval':self.eval,
                    '挂树':self.addTree,'下树':self.eraseTree,'查树':self.getTree,'砍树':self.clearTree,
                    '模拟出刀':self.addSimul,'查看模拟刀':self.getSimul,'清空模拟刀':self.clearSimul}
     def exec(self):
@@ -18,7 +18,7 @@ class A:
             return'Done'
         except BaseException as e:
             return'错误:'+str(e)
-    def get(slef):
+    def eval(slef):
         if self.param['sender']['user_id']!=979449732:
             return'__'
         try:
@@ -89,7 +89,7 @@ class A:
         return'清除成功'
     def __call__(self,param):
         try:
-            if not param['message'].startswith('/'):
+            if not param['message'].startswith(':'):
                 return '__'
             print(param)
             self.param=param
