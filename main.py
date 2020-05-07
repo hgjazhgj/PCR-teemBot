@@ -21,7 +21,7 @@ class A:
             return'Done'
         except BaseException as e:
             return'错误:'+str(e)
-    def eval(slef):
+    def eval(self):
         if self.param['sender']['user_id']!=979449732:
             return'__'
         try:
@@ -92,13 +92,13 @@ class A:
         return'清除成功'
     def __call__(self,param):
         try:
-            param['message']=html.unescape(self.param['message'])
+            param['message']=html.unescape(param['message'])
             self.param=param
             if param['message'].startswith('`'):
-                return param['message'][1:]
+                return param['message']
             if param['message'].startswith('!'):
                 try:
-                    s=re.search(r'[0-9+\-*/().]+',param['message']).group()
+                    s=re.search(r'[0-9+\-*/().%<>|&~!^]+',param['message']).group()
                     return s+'='+str(eval(s))
                 except AttributeError:
                     return'错误:不含算术表达式'
