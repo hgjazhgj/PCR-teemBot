@@ -4,15 +4,16 @@ from traceback import print_exc
 import html
 import re
 import time
+import eventlet
 
 def check(x=0):#白名单1检查锁2群主管理员可用4成员可用
     def wrapper(func):
         def inner(self,*args,**kwargs):
             if self.param['sender']['user_id']==979449732:#是我就直接放行,不管锁没锁
-                return func(*args,**kwargs)
+                return func(self,*args,**kwargs)
             if x&1 and self.locked:
                 return'禁止访问'
-            return func(*args,**kwargs)if x&2and self.param['sender']['role']!='member'or x&4and self.param['sender']['role']=='member'else'没有权限'
+            return func(self,*args,**kwargs)if x&2and self.param['sender']['role']!='member'or x&4and self.param['sender']['role']=='member'else'没有权限'
         return inner
     return wrapper
 
@@ -22,7 +23,7 @@ class A:
         self.simulData={}
         self.debug=None
         self.locked=False
-        self.call={'测试':self.test,'exec':self.exec,'eval':self.eval,'lock':self.lock,'unlock':self.unlock,
+        self.call={'在?':self.test,'exec':self.exec,'eval':self.eval,'lock':self.lock,'unlock':self.unlock,
                    '挂树':self.addTree,'下树':self.eraseTree,'查树':self.getTree,'砍树':self.clearTree,
                    '模拟出刀':self.addSimul,'查看模拟刀':self.getSimul,'清空模拟刀':self.clearSimul}
     @check()
@@ -49,7 +50,7 @@ class A:
     def countTree(self):
         return'树上共%d人'%len(self.treeData)
     def test(self):
-        return'测试返回 '+str(self.cmd)
+        return'在 '+str(self.cmd)
     @check(7)
     def addTree(self):
         if len(self.cmd)==1:
@@ -114,13 +115,18 @@ class A:
             if param['message'].startswith('`'):
                 return param['message']
             if param['message'].startswith('!'):
-                try:
-                    s=re.search(r'[0-9+\-*/().%<>|&^]+',param['message']).group()
-                    return s+'='+str(eval(s))
-                except AttributeError:
-                    return'错误:不含算术表达式'
-                except BaseException as e:
-                    return'错误:请检查表达式'
+                ans=[]
+                for s in re.findall(r'[0-9+\-*/().%<>|&^]+',param['message']):
+                    try:
+                        t=str(eval(ans))
+                    except:
+                        continue
+                    if s!=t:
+                        ans.append(s+'='+t)
+                if ans:
+                    return'\n'.join(ans)
+                else:
+                    return'错误:未找到表达式'
             if not param['message'].startswith(':'):
                 return'__'
             try:
@@ -137,7 +143,7 @@ class A:
 a=A()
 
 app=Flask(__name__)
-@app.route("/api",methods=['post','OPTIONS'])
+@app.route("/api",methods=['post'])
 def api():
     try:
         js=request.get_json()
