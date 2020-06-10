@@ -4,7 +4,6 @@ from traceback import print_exc
 import html
 import re
 import time
-import eventlet
 
 def check(x=0):#白名单1检查锁2群主管理员可用4成员可用
     def wrapper(func):
